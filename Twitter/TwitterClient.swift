@@ -88,6 +88,20 @@ class TwitterClient: BDBOAuth1SessionManager {
         )
     }
     
+    func mentionsTimelineWithCompletion(params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
+        self.GET("1.1/statuses/mentions_timeline.json",
+            parameters: params,
+            success: { (operation: NSURLSessionDataTask, response: AnyObject) -> Void in
+                let tweets = Tweet.tweetsWithArray(response as! [NSDictionary])
+                completion(tweets: tweets, error: nil)
+            },
+            failure: { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
+                print("error getting timeline")
+                completion(tweets: nil, error: error)
+            }
+        )
+    }
+    
     func updateStatusWithCompletion(status: String, inReplyToStatusId: String? = nil, completion: (tweet: Tweet?, error: NSError?) -> ()) {
         self.POST("1.1/statuses/update.json",
             parameters: [

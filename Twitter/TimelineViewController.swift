@@ -10,14 +10,8 @@ import UIKit
 import DateTools
 import AFNetworking
 
-enum TweetsControllerType {
-    case Timeline
-    case Mentions
-}
-
-class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
-    var controllerType: TweetsControllerType?
     var tweets: [Tweet]?
     
     // Initialization Methods
@@ -54,22 +48,14 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
             tweetsTableViewCell.profileImage.setImageWithURL(NSURL(string: profileImageUrl)!)
         }
         
-        tweetsTableViewCell.parentViewController = self
-        tweetsTableViewCell.user = tweet.user!
         tweetsTableViewCell.nameLabel.text = tweet.user!.name
-        tweetsTableViewCell.screennameLabel.text = tweet.user!.screenname
         tweetsTableViewCell.createdAtLabel.text = "\(tweet.createdAt.shortTimeAgoSinceNow()) ago"
         tweetsTableViewCell.tweetLabel.text = tweet.text
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: tweetsTableViewCell, action: "onProfileImageTap:")
-        tweetsTableViewCell.profileImage.addGestureRecognizer(tapGestureRecognizer)
         
         return tweetsTableViewCell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
         let vc = self.storyboard?.instantiateViewControllerWithIdentifier("DetailsViewController") as! DetailsViewController
         let tweet = self.tweets![indexPath.row]
         
@@ -79,21 +65,11 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func retrieveTweets(refreshControl: UIRefreshControl? = nil) {
         // Pull the tweets
-        switch controllerType! {
-        case .Timeline:
-            TwitterClient.sharedInstance.homeTimelineWithCompletion(nil) { (tweets, error) -> () in
-                self.tweets = tweets
-                self.tableView.reloadData()
-                
-                refreshControl?.endRefreshing()
-            }
-        case .Mentions:
-            TwitterClient.sharedInstance.mentionsTimelineWithCompletion(nil) { (tweets, error) -> () in
-                self.tweets = tweets
-                self.tableView.reloadData()
-                
-                refreshControl?.endRefreshing()
-            }
+        TwitterClient.sharedInstance.homeTimelineWithCompletion(nil) { (tweets, error) -> () in
+            self.tweets = tweets
+            self.tableView.reloadData()
+            
+            refreshControl?.endRefreshing()
         }
     }
     

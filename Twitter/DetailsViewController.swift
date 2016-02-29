@@ -59,6 +59,15 @@ class DetailsViewController: UIViewController {
         }
     }
     
+    @IBAction func onProfileImageTap(sender: UITapGestureRecognizer) {
+        if sender.state == .Ended {
+            let profileViewController = storyboard?.instantiateViewControllerWithIdentifier("ProfileViewController") as! ProfileViewController
+            
+            profileViewController.user = tweet?.user
+            self.navigationController?.pushViewController(profileViewController, animated: true)
+        }
+    }
+    
     @IBAction func onReply(sender: AnyObject) {
         let vc = storyboard?.instantiateViewControllerWithIdentifier("ComposeViewController") as! ComposeViewController
         let nc = UINavigationController(rootViewController: vc)

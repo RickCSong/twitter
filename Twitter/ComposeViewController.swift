@@ -42,7 +42,6 @@ class ComposeViewController: UIViewController {
     @IBAction func onTweet(sender: AnyObject) {
         TwitterClient.sharedInstance.updateStatusWithCompletion(self.tweetTextView.text) { (tweet, error) -> () in
             if tweet != nil {
-                print(tweet)
                 self.dismissViewControllerAnimated(true, completion: nil)
             }
         }
